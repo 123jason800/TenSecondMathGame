@@ -1,4 +1,99 @@
 body {
-    font-family: 'Press Start 2P', cursive;
+    font-family: 'Pridi', serif;
+    font-size: 64px;
+    color: #fff;
+}
+
+
+h1 {
+    font-size: 64px;
+ 
     
 }
+
+.pink-text-shadow {
+    text-shadow: 2px 4px 5px rgb(255, 72, 215),10px 10px 10px #000;
+}
+
+.blue-text-shadow {
+    text-shadow: 2px 4px 5px rgb(54, 139, 250),10px 10px 10px #000;
+}
+
+/* Fixed to background */
+
+video {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    z-index: -2;
+}
+
+/* Game Content */
+#game-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    height: 800px;
+}
+
+#game-input input{
+    border: 0;
+    background: transparent;
+    text-align: center;
+    color: #fff;
+   
+    
+}
+
+#game-input input:focus {
+    outline: none;
+}
+
+/* Hide Spin BUtton */
+
+#game-input input::-webkit-inner-spin-button, 
+#game-input input::-webkit-outer-spin-button { 
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    margin: 0; 
+}
+
+#game-form label {
+    color: white;
+    font-size: 24px;
+}
+
+
+
+.btn-pink-shadow.active {
+    text-shadow: 2px 4px 5px rgb(255, 72, 215);
+}
+
+
+.btn-blue-shadow.active {
+   text-shadow: 2px 4px 5px rgb(69, 144, 243);
+}
+
+#game-form input[type='radio'] {
+    visibility: hidden;
+}
+
+/* Game Timer */
+#game-timer {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    right: 0;
+    bottom:0;
+    z-index: -1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.game-timer-text {
+    font-size: 15rem;
+}
+
