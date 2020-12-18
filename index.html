@@ -31,12 +31,21 @@
             <div id="game-input">
                 <input type="number">
             </div>
-            <form id="game-form" >
-                <label class="btn game-button active btn-pink-shadow" for="add"><input type="radio" name="operations" value="add" checked>Add</label>
-                <label class="btn game-button btn-pink-shadow" for="subtract"><input type="radio" name="operations" value="subtract" >Subtract</label>
-                <label class="btn game-button btn-blue-shadow" for="multiply"><input type="radio" name="operations" value="multiply" >Multiply</label>
-                <label class="btn game-button btn-blue-shadow" for="divide"><input type="radio" name="operations"  value="divide">Divide</label>
-            </form>
+
+            <div id="#game-settings">
+                <form id="game-form" >
+                    <label class="btn game-button active btn-pink-shadow" for="add"><input type="radio" name="operations" value="add" checked>Add</label>
+                    <label class="btn game-button btn-pink-shadow" for="subtract"><input type="radio" name="operations" value="subtract" >Subtract</label>
+                    <label class="btn game-button btn-blue-shadow" for="multiply"><input type="radio" name="operations" value="multiply" >Multiply</label>
+                    <label class="btn game-button btn-blue-shadow" for="divide"><input type="radio" name="operations"  value="divide">Divide</label>
+                    
+                </form>
+                <form id="limit-form">
+                    <p class="limit-values">35</p>
+                    <input type="range" id="limit-input" value="35" name="limit" min="10" max="60">
+                </form>
+            </div>
+          
            
             <div class="mt-5" id=#game-data> 
                 <h2 class="text-center">Score</h2>

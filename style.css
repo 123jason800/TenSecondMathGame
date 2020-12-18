@@ -80,6 +80,40 @@ video {
     visibility: hidden;
 }
 
+/* Game Limit Form */
+#limit-form {
+    text-align: center;
+    width: 50%;
+    margin: 0 auto;
+}
+
+.limit-values {
+    font-size: 20px;
+    margin: 0;
+}
+
+#limit-form input {
+    -webkit-appearance: none;
+    width: 100%;
+    display: block;
+    margin: 0 auto;
+    background: linear-gradient(90deg, rgba(230,145,233,1) 0%, rgba(29,29,155,1) 50%);
+    border-radius: 30px;
+    border: 2px solid #fff;
+}
+
+#limit-form input::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    background-color: rgb(218, 230, 250);
+    opacity: 1;
+    width: 15px;
+    height: 15px;
+}
+
+#limit-form input:focus {
+    outline: none;
+}
+
 /* Game Timer */
 #game-timer {
     position: fixed;
