@@ -107,12 +107,12 @@ var getAnswer = function(numArray ,operation) {
 
 
 
-function Game(problem,operation) {
+function Game(problem,operation,userInput) {
     this.operation = operation;
     this.currentProblem = problem;
+    this.userInput = userInput;
     this.score = 0;
     this.seconds = 10;
-    this.userInput = '';
     this.highScore = 0;
  
 
@@ -161,7 +161,9 @@ function Game(problem,operation) {
         },1000);   
         gameInput.unbind();
         displayProblem(this.currentProblem,this.operation);
+        this.checkAnswer();
         this.getUserInput();
+        
     }
 
     this.endGame = function(){
@@ -177,10 +179,11 @@ function Game(problem,operation) {
         gameOutput.toggleClass('blur-away');
         var timer = setInterval(function() {
             count++;
-            if (count === 3) {
+            if (count === 2) {
                 gameInput.on('keypress',function() {
                     that.startRound(displayOutput,getOperation());
                 });
+                that.getNewProblem();
                 gameTimerText.text(that.seconds);
                 gameOutput.toggleClass('blur-away');
                 gameInput.prop('disabled', false);
@@ -232,6 +235,7 @@ $(window).click(function() {
     gameInput.trigger('focus');
 })
 
+
 gameLimitInput.on('input',function() {
     var percent = Math.floor((parseInt($(this).val())/50) * 100);
     limitValues.text($(this).val());
@@ -242,11 +246,14 @@ gameLimitInput.on('input',function() {
 
 var gameStart = function() {    
     gameInput.on('input',function() {
-        var game = new Game(displayOutput,getOperation());
+        var game = new Game(displayOutput,getOperation(),$(this).val());
         game.startRound();
         blurButtons();
     });
 }
+// Inital Problem
 var displayOutput = getProblem();
+// Ensures user is aware of the input
+gameInput.trigger('focus');
 displayProblem(displayOutput,getOperation());
 gameStart();
