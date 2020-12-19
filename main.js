@@ -5,12 +5,15 @@ var gameTimerText = $('.game-timer-text');
 var gameLimitInput = $('#limit-input');
 var limitValues = $('.limit-values');
 var gameOutput = $('#game-output');
-var highScore = 0;
+var gameScore = $('#game-score');
+var gameHighScore = $('#game-high-score');
+var gameSettings = $('#game-settings');
+
 
 var operationSymbols = {
     "add": " + ",
     "subtract" : " - ",
-    "multiply": " X ",
+    "multiply": " x ",
     "divide": " / "
 }
 
@@ -23,11 +26,6 @@ var countDown = function(seconds) {
         }
     },1000);   
 }
-
-
-
-
-
 
 
 var clearGameInput = function() {
@@ -45,10 +43,12 @@ var getRandomNumbers = function(max, operation) {
     if (operation !== "divide") {
         return [Math.floor(Math.random() * (max-1) + 1),Math.floor(Math.random() * (max-1) + 1)];
     }
+    
     var dividend = Math.floor(Math.random() * (max-1) + 1);
     var divisor = Math.floor(Math.random() * (max-1) + 1);
-    while (dividend % divisor !== 0 ) {
+    while ( dividend % divisor !== 0 ) {
         divisor = Math.floor(Math.random() * (max-1) + 1);
+        dividend = Math.floor(Math.random() * (max-1) + 1);
     }
     return [dividend,divisor];   
 }
@@ -73,18 +73,19 @@ var getOperation = function() {
 }
 
 var getProblem = function() {
-    var problem = this.operation === "divide"?getRandomNumbers(limitValues.text(),true):getRandomNumbers(limitValues.text());
+    var problem = getRandomNumbers(limitValues.text(),getOperation());
     var [placeOne,placeTwo] = problem;
-    if(this.operation === "subtract") {
+    if(getOperation() === "subtract") {
         placeOne = Math.max(...problem);
         placeTwo = Math.min(...problem);
     }
+    
     return [placeOne,placeTwo];
 }
 
 var getAnswer = function(numArray ,operation) {
     var answer;
-    
+ 
     switch(operation) {
         case "add":
             answer = numArray[0] + numArray[1];
@@ -101,50 +102,45 @@ var getAnswer = function(numArray ,operation) {
     }
    
     return answer;
-
-
 }
 
-function Round(problem,operation,max) {
+
+
+
+function Game(problem,operation) {
     this.operation = operation;
     this.currentProblem = problem;
     this.score = 0;
     this.seconds = 10;
-    this.max = max;
     this.userInput = '';
+    this.highScore = 0;
  
 
     this.checkAnswer = function() {
-
        if (parseInt(this.userInput) === getAnswer(this.currentProblem,this.operation)) {
            this.seconds++;
            this.score++;
            gameTimerText.text(this.seconds);
-           return true;
+           gameScore.text(this.score);
+           this.getNewProblem();
+           this.resetUserInput();
        }
-       return false;
+      
     }
-
     this.getNewProblem = function() {
-        this.currentProblem = getRandomNumbers(this.max,this.operation);
+        this.currentProblem = getProblem();
         displayProblem(this.currentProblem,this.operation);
     }
     
     this.getUserInput = function() {
-        gameInput.unbind();
         var that = this;
         gameInput.on('input',function() {
             that.userInput = $(this).val();
-            console.log(that.userInput);
-            if (that.checkAnswer()) {
-                that.getNewProblem();
-                that.resetUserInput();
-            }
+            that.checkAnswer();
             if (that.seconds === 0) {
                 $(this).unbind();
             }
         });
-
     }
 
     this.resetUserInput = function() {
@@ -153,6 +149,7 @@ function Round(problem,operation,max) {
     }
 
     this.startRound = function() {
+        $('#game-timer').toggleClass('blur-away');
         var that = this;
         var timer = setInterval(function() {
             that.seconds--;
@@ -162,16 +159,59 @@ function Round(problem,operation,max) {
                 that.endGame();
             }
         },1000);   
+        gameInput.unbind();
         displayProblem(this.currentProblem,this.operation);
         this.getUserInput();
     }
 
     this.endGame = function(){
-        console.log("Your score is :" +  this.score);
+        gameTimerText.text("10");
+        this.setHighScore();
+        this.score = 0;
+        this.seconds = 10;
+        gameScore.text("0");
+        var that = this;
+        var count = 0;
+        $('#game-timer').toggleClass('blur-away');
+        gameInput.prop('disabled', true);
+        gameOutput.toggleClass('blur-away');
+        var timer = setInterval(function() {
+            count++;
+            if (count === 3) {
+                gameInput.on('keypress',function() {
+                    that.startRound(displayOutput,getOperation());
+                });
+                gameTimerText.text(that.seconds);
+                gameOutput.toggleClass('blur-away');
+                gameInput.prop('disabled', false);
+                gameInput.trigger('focus');
+                clearInterval(timer);
+            }
+        },1000);   
+     
     }
+
+    this.setHighScore = function() {
+        if (this.highScore < this.score) {
+            this.highScore = this.score;
+            gameHighScore.text(this.highScore);
+        }
+    }
+
 
 }
 
+
+var blurButtons = function() {
+    $('input[name=operations]').each(function(){
+        if (!$(this).is(':checked')) {
+            $(this).parent().toggleClass('blur-away');
+            $(this).parent().unbind();
+        }
+    })
+    $('#limit-form').toggleClass('blur-away');
+    gameLimitInput.unbind();
+}
 
     
 // Ensure button gets checked for the radio input
@@ -181,7 +221,9 @@ gameButton.on('click',function(){
         current.prop("checked", true);
         gameForm.find('.active').toggleClass('active');
         $(this).toggleClass('active');     
-
+        displayOutput = getProblem();
+        displayProblem(displayOutput,getOperation());
+      
     }
 });
 
@@ -194,16 +236,17 @@ gameLimitInput.on('input',function() {
     var percent = Math.floor((parseInt($(this).val())/50) * 100);
     limitValues.text($(this).val());
     $(this).css("background",`linear-gradient(90deg, rgba(230,145,233,1) 0%, rgba(29,29,155,1) ${percent}%)`);
+    displayOutput = getProblem();
+    displayProblem(displayOutput,getOperation());
 });
 
-
-
-var gameStart = function() {
-    displayProblem(2,3,"add");
-    var round = new Round([2,3],"add",35);
-    gameInput.on('keypress',function() {
-        round.startRound();
+var gameStart = function() {    
+    gameInput.on('input',function() {
+        var game = new Game(displayOutput,getOperation());
+        game.startRound();
+        blurButtons();
     });
 }
-
+var displayOutput = getProblem();
+displayProblem(displayOutput,getOperation());
 gameStart();

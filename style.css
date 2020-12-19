@@ -131,3 +131,8 @@ video {
     font-size: 15rem;
 }
 
+.blur-away {
+    z-index: -2;
+    filter: blur(15px);
+    transition: ease-in 1s;
+}
